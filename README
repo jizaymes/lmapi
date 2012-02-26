@@ -4,6 +4,22 @@ Any further contributions welcome!
 
 Example apps..
 
+<?php
+require("lmapi.php");
+
+$lm = new logicMonitor($config);
+
+if($lm === false) { die("Error"); }
+
+$results = $lm->addHostGroup("Host Group","Description",1);
+
+if(@$results->data) {
+        echo("My HostGroupID is : " . $results->data->id);
+}
+
+?>
+
+
 $ php addHost.php esx1.company.com ESX1 "Device Description" 1 "Servers"
 
 Developors:

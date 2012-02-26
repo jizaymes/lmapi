@@ -115,14 +115,28 @@ class logicMonitor
 
 /* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
 	
-	public function addHostGroup($hostGroupName,$description,$parentId) {
+	public function addHostGroup($hostGroupNameWork,$descriptionWork,$parentId) {
 
 		if(!$this->connected) { return false; }
+
+		$hostGroupName = urlencode(htmlspecialchars($hostGroupNameWork));
+		$description = urlencode(htmlspecialchars($descriptionWork));
+
+                if(!is_numeric($parentId)) {
+                        $res = $this->getHostGroups($parentId);
+
+                        if(count($res) == 1) { //perfect
+                                $parentId = $res[0]['id'];
+                        } else {
+                                return false;
+                        }
+                }
+
 	
 		$ch = curl_init();
 	
 		$url = $this->config['baseurl'] . "addHostGroup?name=$hostGroupName&description=$description&alertEnable=true&parentId=$parentId";
-	
+
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookie);
@@ -130,7 +144,7 @@ class logicMonitor
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		
 		$response = json_decode(curl_exec($ch));
-				
+		
 		curl_close($ch);
 		
 		return $response;
