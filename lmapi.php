@@ -100,8 +100,7 @@ class logicMonitor
 			foreach($response->data as $workLine) {
 				$line=(array)$workLine;
 				
-	
-				if(preg_match("/" . $name . "/",$line['fullPath'])) {
+				if(preg_match("/" . $name . "$/",$line['fullPath'])) {
 					$matches[] = $line;
 				}
 			}
@@ -136,7 +135,7 @@ class logicMonitor
 		$ch = curl_init();
 	
 		$url = $this->config['baseurl'] . "addHostGroup?name=$hostGroupName&description=$description&alertEnable=true&parentId=$parentId";
-
+echo($url);
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookie);
@@ -144,7 +143,7 @@ class logicMonitor
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		
 		$response = json_decode(curl_exec($ch));
-		
+	
 		curl_close($ch);
 		
 		return $response;
