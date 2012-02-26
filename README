@@ -1,4 +1,10 @@
 This PHP class allows the interaction with LogicMonitor (http://www.logicmonitor.com)
 
+Any further contributions welcome!
+
+Example apps..
+
+$ php addHost.php esx1.company.com ESX1 "Device Description" 1 "Servers"
+
 Developors:
 - jizaymes on Github

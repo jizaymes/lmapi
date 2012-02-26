@@ -77,7 +77,7 @@ class logicMonitor
 
 /* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
 	
-	public function getHostGroups($name = "") {
+	public function getHostGroups($workName = "") {
 
 		if(!$this->connected) { return false; }
 	
@@ -93,12 +93,15 @@ class logicMonitor
 		$response = json_decode(curl_exec($ch));
 		$matches = array();
 		
-		if(strlen($name) > 0 && $response != null) {
-		
+		if(strlen($workName) > 0 && $response != null) {
+
+			$name = preg_replace("/\//","\\\/",$workName);
+
 			foreach($response->data as $workLine) {
 				$line=(array)$workLine;
-		
-				if(preg_match("/" . $name . "/",$line['name'])) {
+				
+	
+				if(preg_match("/" . $name . "/",$line['fullPath'])) {
 					$matches[] = $line;
 				}
 			}
@@ -140,7 +143,7 @@ class logicMonitor
 	
 	
 		if(!is_numeric($hostGroupId)) { 
-			$res = $this->listGroups($hostGroupId); 
+			$res = $this->getHostGroups($hostGroupId); 
 			
 			if(count($res) == 1) { //perfect
 				$hostGroupId = $res[0]['id'];
