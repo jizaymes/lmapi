@@ -77,6 +77,30 @@ class logicMonitor
 
 /* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
 	
+	public function getHost($workName = "") {
+
+		if(!$this->connected) { return false; }
+	
+		$name = urlencode($workName);
+	
+		$ch = curl_init();
+		$url = $this->config['baseurl'] . "getHost?hgId=-1&displayName=$name";
+
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookie); 
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		
+		$response = json_decode(curl_exec($ch));
+
+		curl_close($ch);
+
+		return $response->data;	
+	}
+
+/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
+	
 	public function getHostGroups($workName = "") {
 
 		if(!$this->connected) { return false; }
@@ -209,6 +233,63 @@ class logicMonitor
 		$ch = curl_init();
 		$url = $this->config['baseurl'] . "addHost?hostName=$hostName&displayedAs=$displayName&description=$description&link=&alertEnable=true&agentId=$agentId&hostGroupIds=$hostGroupId";
 	
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookie);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	
+		$response = json_decode(curl_exec($ch));
+		curl_close($ch);
+	
+		return $response;
+	
+	}
+
+/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
+	
+	public function deleteHost($hostName) {
+		if(!$this->connected) { return false; }
+	
+
+		if(!is_numeric($hostName)) {	
+
+			$res = $this->getHost($hostName); 
+
+			$hostId = $res->id;
+		} else { $hostId = $hostName; }
+	
+		$ch = curl_init();
+		$url = $this->config['baseurl'] . "deleteHost?hostId=$hostId&deleteFromSystem=true";
+
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookie);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	
+		$response = json_decode(curl_exec($ch));
+		curl_close($ch);
+	
+		return $response;
+	
+	}
+
+
+/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
+	
+	public function deleteHostGroup($hostGroupName) {
+		if(!$this->connected) { return false; }
+	
+		if(!is_numeric($hostGroupName)) {	
+
+			$res = $this->getHostGroups($hostGroupName); 
+			$hostGroupId = $res[0]['id'];
+		} else { $hostGroupId = $hostGroupName; }
+
+		$ch = curl_init();
+		$url = $this->config['baseurl'] . "deleteHostGroup?hgId=$hostGroupId&deleteFromSystem=true";
+
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookie);
