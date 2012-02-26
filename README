@@ -23,4 +23,4 @@ if(@$results->data) {
 $ php addHost.php esx1.company.com ESX1 "Device Description" 1 "Servers"
 
 Developors:
-- jizaymes on Github
+- James Cornman at Atlantic Metro / http://github.com/jizaymes / http://www.atlanticmetro.net/?lmapi
