@@ -6,9 +6,9 @@ $lm = new logicMonitor($config);
 if($lm === false) { die("Error"); }
 
 if($argc>1) { 
-	$groups = $lm->listGroups($argv[1]);
+	$groups = $lm->getHostGroups($argv[1]);
 } else { 
-	$groups = $lm->listGroups();
+	$groups = $lm->getHostGroups();
 }
 
 

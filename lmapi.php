@@ -77,7 +77,7 @@ class logicMonitor
 
 /* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
 	
-	function listGroups($name = "") {
+	public function getHostGroups($name = "") {
 
 		if(!$this->connected) { return false; }
 	
@@ -135,7 +135,7 @@ class logicMonitor
 
 /* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
 	
-	function addHost($hostName,$displayName,$description,$agentId,$hostGroupId) {
+	public function addHost($hostName,$displayName,$description,$agentId,$hostGroupId) {
 		if(!$this->connected) { return false; }
 	
 	
