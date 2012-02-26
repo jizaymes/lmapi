@@ -111,6 +111,47 @@ class logicMonitor
 		return $matches;
 	
 	}
+	
+/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
+	
+	public function updateHostGroupProps($hostGroupNameWork,$propName,$propValueWork) {
+
+		if(!$this->connected) { return false; }
+
+		$propValue = urlencode(htmlspecialchars($propValueWork));
+
+        if(!is_numeric($hostGroupNameWork)) {
+			$hostGroupName = urlencode(htmlspecialchars($hostGroupNameWork));
+        
+            $res = $this->getHostGroups($hostGroupName);
+
+            if(count($res) == 1) { //perfect
+                    $hostGroupId = $res[0]['id'];
+            } else {
+                    return false;
+            }
+        } else 
+        {
+        	$hostGroupId = $hostGroupNameWork;
+        }
+
+	
+		$ch = curl_init();
+	
+		$url = $this->config['baseurl'] . "updateHostGroup?id=$hostGroupId&name=$hostGroupName&propName0=$propName&propValue0=$propValue";
+
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookie);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		
+		$response = json_decode(curl_exec($ch));
+	
+		curl_close($ch);
+		
+		return $response;
+	}
 
 /* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
 	
@@ -135,7 +176,7 @@ class logicMonitor
 		$ch = curl_init();
 	
 		$url = $this->config['baseurl'] . "addHostGroup?name=$hostGroupName&description=$description&alertEnable=true&parentId=$parentId";
-echo($url);
+
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookie);
