@@ -8,14 +8,17 @@ if($lm === false) { die("Error"); }
 
 $bulkadd = array(
 
-	array("Core Network","","LAX0"),
-	array("Core Network","","LGA6"),
-	array("Core Network","","LGA4")
+	array("Domain Controllers","",71),
+	array("FTP Servers","",71),
+	array("iConect DB Servers","",71),
+	array("iConect Web Servers","",71),
+	array("Storage","",71),
+	array("Terminal Services","",71),
 	);
 
 	foreach($bulkadd as $add) {
 		$results = $lm->addHostGroup($add[0],$add[1],$add[2]);
-
+		
 		if(@$results->data) { 
 			echo("My HostGroupID (" . $add[0] . ") is : " . $results->data->id);
 		}

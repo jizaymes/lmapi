@@ -202,7 +202,7 @@ class logicMonitor
             }
         }
 
-	
+
 		$url = $this->config['baseurl'] . "addHostGroup?name=$hostGroupName&description=$description&alertEnable=true&parentId=$parentId";
 
 		$results = null;
@@ -210,6 +210,7 @@ class logicMonitor
 	
 		$response = $this->call($url,$results,$errMsg);
 		
+		if(@$errMsg) { echo($errMsg . "\n"); }
 		return $results;
 	}
 
