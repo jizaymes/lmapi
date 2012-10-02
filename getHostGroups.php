@@ -11,7 +11,7 @@ if($argc>1) {
 	$groups = $lm->getHostGroups();
 }
 
-
-echo(json_encode($groups));
+print_r($groups);
+//echo(json_encode($groups));
 
 ?>

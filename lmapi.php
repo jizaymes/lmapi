@@ -1,6 +1,8 @@
 <?php
 	
 require("config.php");
+
+define('HOWLONG',14400);
 	
 class logicMonitor
 {
@@ -110,13 +112,29 @@ class logicMonitor
 	}
 
 /* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
+
+        public function getHost($workName = "") {
+
+                $name = urlencode($workName);
+
+                $url = $this->config['baseurl'] . "getHost?hgId=-1&displayName=$name";
+
+                $results = null;
+                $errMsg = null;
+
+                $response = $this->call($url,$results,$errMsg);
+
+                return $results;
+        }
+
+/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
 	
-	public function getHost($workName = "") {
+	public function getHostInGroup($workName = "") {
 
 		$name = urlencode($workName);
 	
-		$url = $this->config['baseurl'] . "getHost?hgId=-1&displayName=$name";
-	
+		$url = $this->config['baseurl'] . "getHosts?hgId=$workName";
+echo($url);	
 		$results = null;
 		$errMsg = null;
 	
@@ -294,6 +312,66 @@ class logicMonitor
 	
 	}
 	
+/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
+	
+	public function getAlerts($hostGroupName = "") {
+	
+// GET /santaba/rpc/getAlerts?hostGroupName=webservers&ackFilter=nonacked HTTP/1.1
+
+		$url = $this->config['baseurl'] . "getAlerts";
+
+		if(strlen(urlencode($hostGroupName)) > 0 ) {
+				$url .= "?hostGroupName=$hostGroupName";
+		}
+
+		$results = null;
+		$errMsg = null;
+	
+		$response = $this->call($url,$results,$errMsg);
+
+		return $results;
+	}	
+
+/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
+	
+	public function getAlertsWithCriteria($criteria = array(), $hostGroupName = "") {
+	
+		if(@!$criteria['level']) { 
+			$criteria['level'][] = "error";
+			$criteria['level'][] = "critical";
+		} 
+				
+		
+		if(@!$criteria['howold']) { $criteria['howold'] = HOWLONG; }
+		if(@!$criteria['acked']) { $criteria['acked'] = false; }
+		
+	
+		$results = $this->getAlerts($hostGroupName);
+//		print_r($results);
+		$newresults = array();
+		
+		foreach($results->alerts as $result)
+		{	
+		
+			if( in_array($result->level,$criteria['level']) ) {
+				if($criteria['acked'] == true) { 
+					if( ( time() - $result->ackedOn ) > $criteria['howold'] ) {
+							$newresults[] = $result;
+					}
+				} else {
+					if( ( time() - $result->startOn ) > $criteria['howold'] ) {
+							$newresults[] = $result;
+					}				
+				}
+			}
+		}
+
+		
+
+		return $newresults;
+	}	
+
+
 }
 
 ?>
