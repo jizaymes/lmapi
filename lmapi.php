@@ -134,12 +134,10 @@ class logicMonitor
 		$name = urlencode($workName);
 	
 		$url = $this->config['baseurl'] . "getHosts?hgId=$workName";
-echo($url);	
 		$results = null;
 		$errMsg = null;
 	
 		$response = $this->call($url,$results,$errMsg);
-
 		return $results;	
 	}
 
