@@ -59,29 +59,38 @@ class logicMonitor
 
 /* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */	
 
-	public function call($url,&$results,&$errMsg = null)
-	{
+        public function call($url,&$results,&$errMsg = null,$raw = false)
+        {
 
-		if(!$this->connected) { echo("Not Connected"); return false; }
+                if(!$this->connected) { echo("Not Connected"); return false; }
 
-		$ch = curl_init();
+                $ch = curl_init();
 
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookie); 
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		
-		$response = json_decode(curl_exec($ch));
-		
-		if($response->status != 200) {
-			$errMsg = $response->errmsg;
-			return $response->status;
-		} else {
-			$results = $response->data;
-			return $response->status;
-		}
-	}
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookie);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+
+                if(!$raw)
+                {
+                        $response = json_decode(curl_exec($ch));
+
+                        if($response->status != 200) {
+                                $errMsg = $response->errmsg;
+                                return $response->status;
+                        } else {
+                                $results = $response->data;
+                                return $response->status;
+                        }
+                }
+                else
+                {
+                        return curl_exec($ch);
+                }
+
+        }
 	
 /* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */	
 	
@@ -370,84 +379,71 @@ class logicMonitor
 	}	
 
 
-	/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
-	
-	public function getHostData($hostName = "",$dsInstance = "", $period = 2, $dataPoints = array()) {
+        /* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
 
-		$url = $this->config['baseurl'] . "getData";
-	
-		$results = null;
-		$errMsg = null;
-	
-		if($hostName == "" || $dsInstance == "" || $period < 1 || count($dataPoints) == 0)
-		{
-			return false;
-		}
+        public function getHostData($hostName = "",$dsInstance = "", $period = "2hour", $dataPoints = array()) {
 
-		$url .= "?host=$hostName";
-		$url .= "&dataSourceInstance=" . $dsInstance;
-		$url .= "&period=" . $period . "hours";
-		
-		for($cnt = 0; $cnt < count($dataPoints); $cnt++)
-		{
-			$url .= "&dataPoint" . $cnt . "=" . $dataPoints[$cnt];
-		}
-	
-	
-	
-		$response = $this->call($url,$results,$errMsg);
-		$matches = array();
-	
-		if($results != null) {
+                $url = $this->config['baseurl'] . "getData";
 
-			$newResults = (array)$results;
-			
-			return $newResults;
-		}
-		else
-		{
-			return false;
-		}
-	
-	}
-		
+                $results = null;
+                $errMsg = null;
+
+                if($hostName == "" || $dsInstance == "" || $period < 1 || count($dataPoints) == 0)
+                {
+                        return false;
+                }
+
+                $url .= "?host=$hostName";
+                $url .= "&dataSourceInstance=" . $dsInstance;
+                $url .= "&period=" . $period;
+
+                for($cnt = 0; $cnt < count($dataPoints); $cnt++)
+                {
+                        $url .= "&dataPoint" . $cnt . "=" . $dataPoints[$cnt];
+                }
+         
+                $response = $this->call($url,$results,$errMsg);
+                $matches = array();
+                        
+                if($results != null) {
+        
+                        $newResults = (array)$results;
+                        return $newResults;
+                }
+                else
+                {
+                        return false;
+                }
+
+        }  	
+
 	/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */	
+                
+        public function getHostDataGraph($hostName = "",$dsInstance = "", $period = "2hour", $graphName = "", $graphSize = 450) {
+                
+                $url = $this->config['baseurl'] . "getGraphImage";
 
-	public function getHostDataGraph($hostName = "",$dsInstance = "", $period = 2, $graphName = "") {
+                $results = null;
+                $errMsg = null;
+                
+                if($hostName == "" || $dsInstance == "" || $period < 1 || $graphName == "")
+                {
+                        return false;
+                }               
+                                
+                $url .= "?time=" . $period;
+                $url .= "&graphName=$graphName";
+                $url .= "&hostDisplayedAs=$hostName";    
+                $url .= "&dataSourceInstanceName=" . $dsInstance;
+                $url .= "&width=$graphSize";
+                
+                $response = $this->call($url,$results,$errMsg,true);
+                        
+                return $response;
 
-		$url = $this->config['baseurl'] . "getGraphData";
-	
-		$results = null;
-		$errMsg = null;
-	
-		if($hostName == "" || $dsInstance == "" || $period < 1 || $graphName == "")
-		{
-			return false;
-		}
+        }
 
-		$url .= "?time=" . $period . "hour";
-		$url .= "&graphName=$graphName";
-		$url .= "&hostDisplayedAs=$hostName";		
-		$url .= "&dataSourceInstanceName=" . $dsInstance;
-		$url .= "&csv=false";
-
-		$response = $this->call($url,$results,$errMsg);
-		
-		if($results != null) {
-		
-			$newResults = (array)$results;
-			return $newResults;
-		}
-		else
-		{
-			return false;
-		}
-	
-	}
-		
 	/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */	
-
-
 }
 
 ?>
