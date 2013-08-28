@@ -413,6 +413,39 @@ class logicMonitor
 		
 	/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */	
 
+	public function getHostDataGraph($hostName = "",$dsInstance = "", $period = 2, $graphName = "") {
+
+		$url = $this->config['baseurl'] . "getGraphData";
+	
+		$results = null;
+		$errMsg = null;
+	
+		if($hostName == "" || $dsInstance == "" || $period < 1 || $graphName == "")
+		{
+			return false;
+		}
+
+		$url .= "?time=" . $period . "hour";
+		$url .= "&graphName=$graphName";
+		$url .= "&hostDisplayedAs=$hostName";		
+		$url .= "&dataSourceInstanceName=" . $dsInstance;
+		$url .= "&csv=false";
+
+		$response = $this->call($url,$results,$errMsg);
+		
+		if($results != null) {
+		
+			$newResults = (array)$results;
+			return $newResults;
+		}
+		else
+		{
+			return false;
+		}
+	
+	}
+		
+	/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */	
 
 
 }
