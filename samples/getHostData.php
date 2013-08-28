@@ -1,12 +1,13 @@
 <?php
-require("lmapi.php");
+require("../config.php");
+require("../lmapi.php");
 
 $lm = new logicMonitor($config);
 
 if($lm === false) { die("Error"); }
 
 
-$result = $lm->getHostData("ssw1.lax0","snmp64_If-GigabitEthernet1/1/37",1,array("inOctets","outOctets"));
+$result = $lm->getHostData("ssw1.lax0","snmp64_If-GigabitEthernet1/1/37","1hour",array("inOctets","outOctets"));
 
 $cnt = 0;
 
@@ -29,8 +30,8 @@ foreach($result['values'] as $item)
 	
 }
 
-$indata = $inVal / $cnt;
-$outdata = $outVal / $cnt;
+$indata = ($inVal / $cnt) * 8;
+$outdata = ($outVal / $cnt) * 8;
 
 echo($indata . " :: " . $outdata . "\n");
 

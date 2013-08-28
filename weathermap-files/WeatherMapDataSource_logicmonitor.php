@@ -53,7 +53,7 @@ class WeatherMapDataSource_logicmonitor extends WeatherMapDataSource {
 				$dataPoints[] = $itemz;	
 			}
 			
-			$result = $this->lm->getHostData($hostName,$dataSourceInstance,1,$dataPoints);
+			$result = $this->lm->getHostData($hostName,$dataSourceInstance,"1hour",$dataPoints);
 			
 			$cnt = 0;
 			
@@ -78,8 +78,8 @@ class WeatherMapDataSource_logicmonitor extends WeatherMapDataSource {
 					
 				}
 			
-				$data[IN] = $inVal / $cnt;
-				$data[OUT] = $outVal / $cnt;
+				$data[IN] = (($inVal / $cnt) * 8);
+				$data[OUT] = (($outVal / $cnt) * 8);
 			}
 		}
 		

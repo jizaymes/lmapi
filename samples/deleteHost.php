@@ -1,5 +1,6 @@
 <?php
-require("lmapi.php");
+require("../config.php");
+require("../lmapi.php");
 
 $lm = new logicMonitor($config);
 

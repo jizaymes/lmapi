@@ -2,9 +2,9 @@ This PHP class allows the interaction with LogicMonitor (http://www.logicmonitor
 
 Any further contributions welcome!
 
-Example apps..
 
 <?php
+require("config.php");
 require("lmapi.php");
 
 $lm = new logicMonitor($config);
@@ -21,6 +21,19 @@ if(@$results->data) {
 
 
 $ php addHost.php esx1.company.com ESX1 "Device Description" 1 "Servers"
+
+--- PHP Weathermap integration
+
+In order to utilize logicmonitor data for PHP weathermap, there are some examples in weathermap-files
+
+- WeatherMapDataSource_logicmonitor.php -- Put this in your $weathermap/lib/datasources folder, modify to reference your lmapi.php and config.php, and update your weathermap configs:
+
+LINK providerA-switch1
+        OVERLIBGRAPH /displayLmGraph.php?graphName=Throughput&hostDisplayedAs=switch1&dataSourceInstanceName=snmp64_If-GigabitEthernet12&time=6hour
+        TARGET logicmonitor:switch1:snmp64_If-GigabitEthernet12:InOctets,OutOctets
+        NODES providerA switch1
+
+- displayLmGraph.php -- modify to reference your lmapi.php and config.php, and make it web accessible. Your weathermap config files will need to refer to it, see example above
 
 Developors:
 - James Cornman at Atlantic Metro / http://github.com/jizaymes / http://www.atlanticmetro.net/?lmapi
