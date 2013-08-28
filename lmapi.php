@@ -370,6 +370,51 @@ class logicMonitor
 	}	
 
 
+	/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
+	
+	public function getHostData($hostName = "",$dsInstance = "", $period = 2, $dataPoints = array()) {
+
+		$url = $this->config['baseurl'] . "getData";
+	
+		$results = null;
+		$errMsg = null;
+	
+		if($hostName == "" || $dsInstance == "" || $period < 1 || count($dataPoints) == 0)
+		{
+			return false;
+		}
+
+		$url .= "?host=$hostName";
+		$url .= "&dataSourceInstance=" . $dsInstance;
+		$url .= "&period=" . $period . "hours";
+		
+		for($cnt = 0; $cnt < count($dataPoints); $cnt++)
+		{
+			$url .= "&dataPoint" . $cnt . "=" . $dataPoints[$cnt];
+		}
+	
+	
+	
+		$response = $this->call($url,$results,$errMsg);
+		$matches = array();
+	
+		if($results != null) {
+
+			$newResults = (array)$results;
+			
+			return $newResults;
+		}
+		else
+		{
+			return false;
+		}
+	
+	}
+		
+	/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */	
+
+
+
 }
 
 ?>
