@@ -1,6 +1,7 @@
 <?php
-require("../config.php");
-require("../lmapi.php");
+require(dirname(__FILE__) . '/../' . 'config.php');
+require(dirname(__FILE__) . '/../' . 'lmapi.php');
+
 
 $lm = new logicMonitor($config);
 

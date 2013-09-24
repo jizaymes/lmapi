@@ -444,6 +444,33 @@ class logicMonitor
         }
 
 	/* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */	
+
+        public function getAgents($agentId = null) {
+
+
+                $results = null;
+                $errMsg = null;
+
+
+		if($agentId == null) 
+		{
+                	$url = $this->config['baseurl'] . "getAgents";
+		}
+		else
+		{
+                	$url = $this->config['baseurl'] . "getAgent";
+	                $url .= "?id=" . $agentId;
+		}
+
+
+                $response = $this->call($url,$results,$errMsg,true);
+
+                return $response;
+
+        }
+
+        /* ----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----====----==== */
+
 }
 
 ?>
